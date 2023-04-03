@@ -1,0 +1,52 @@
+/* Estilos para a página de contato */
+.contact-page {
+	margin: 0 auto;
+	max-width: 800px;
+	padding: 20px;
+}
+
+.contact-page h1 {
+	text-align: center;
+}
+
+.contact-page form {
+	display: flex;
+	flex-direction: column;
+	max-width: 400px;
+	margin: 0 auto;
+}
+
+.contact-page label {
+	font-weight: bold;
+}
+
+.contact-page input, .contact-page textarea {
+	margin-bottom: 10px;
+	padding: 5px;
+}
+
+.contact-page button[type="submit"] {
+	padding: 10px 20px;
+	background-color: #007bff;
+	color: white;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+}
+
+.contact-page button[type="submit"]:hover {
+	background-color: #0062cc;
+}
+
+.contact-page p {
+	text-align: center;
+	margin-top: 20px;
+}
+
+.contact-page img {
+	width: 100px;
+	height: 100px;
+	display: block;
+	margin: 0 auto;
+}
+
