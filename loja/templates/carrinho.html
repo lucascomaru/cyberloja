@@ -25,6 +25,7 @@
             <tr>
                 <td colspan="3">Total</td>
                 <td>R$ {{ itens_do_carrinho|total_carrinho }}</td>
+                <button class="remover-do-carrinho" data-carrinho-item-id="{{ item.id }}">Remover</button>
             </tr>
         </tfoot>
     </table>
