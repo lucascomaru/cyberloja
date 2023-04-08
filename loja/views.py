@@ -3,9 +3,8 @@ from .models import Produto, Carrinho
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import UserCreationForm, PasswordResetForm
-from django.contrib.auth.views import PasswordResetView
-from django.contrib.sessions.backends.db import SessionStore
+from .forms import RecuperarSenhaForm
+from django.contrib.auth.forms import PasswordResetForm
 # Create your views here.
 def homepage(request):
     return render(request, "homepage.html")
@@ -79,6 +78,19 @@ def editar_perfil(request):
     return redirect('homepage.html')
 
   return render(request, 'editar_perfil.html')
+
+
+def recuperar_senha(request):
+    if request.method == 'POST':
+        form = RecuperarSenhaForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            PasswordResetForm({'email': email}).save(request=request, use_https=request.is_secure(), email_template_name='registration/password_reset_email.html')
+    else:
+        form = RecuperarSenhaForm()
+    return render(request, 'recuperar_senha.html', {'form': form})
+
+
 
 
 

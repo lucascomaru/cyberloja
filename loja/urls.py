@@ -1,7 +1,7 @@
 # url - #view - template
 
 from django.urls import path, include
-from.views import homepage, contato, lista_produtos, carrinho, cadastrar_usuario, editar_perfil
+from.views import homepage, contato, lista_produtos, carrinho, cadastrar_usuario, editar_perfil, recuperar_senha
 from django.contrib.auth.views import LoginView
 from django.contrib.auth import views as auth_views
 
@@ -16,4 +16,5 @@ urlpatterns = [
     path('editar_perfil/', editar_perfil, name='editar_perfil'),
     path('logout/', auth_views.LogoutView.as_view(next_page=''), name='logout'),
     path('criar_conta/', cadastrar_usuario, name='criar_conta'),
+    path('recuperar_senha/', recuperar_senha,name ='recuperar_senha'),
 ]

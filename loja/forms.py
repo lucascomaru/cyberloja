@@ -17,17 +17,6 @@ class LoginForm(forms.Form):
     password = forms.CharField(label='Senha', widget=forms.PasswordInput)
     remember_me = forms.BooleanField(label='Lembrar Usuário', required=False)
 
-def register(request):
-    if request.method == 'POST':
-        form = CustomUserCreationForm(request.POST)
-        if form.is_valid():
-            user = form.save(commit=False)
-            user.email = form.cleaned_data.get('email')
-            user.cpf = form.cleaned_data.get('cpf')
-            user.phone_number = form.cleaned_data.get('phone_number')
-            user.save()
-            return redirect('home')
-    else:
-        form = CustomUserCreationForm()
-    return render(request, 'registration/register.html', {'form': form})
+class RecuperarSenhaForm(forms.Form):
+    email = forms.EmailField(label='E-mail', max_length=255)
 
