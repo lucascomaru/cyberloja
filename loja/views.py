@@ -1,10 +1,14 @@
 from django.shortcuts import render, redirect
 from .models import Produto, Carrinho
-from django.contrib.auth import authenticate, login
-from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from .forms import RecuperarSenhaForm
 from django.contrib.auth.forms import PasswordResetForm
+from django.contrib.auth import  get_user_model, logout
+from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth.views import PasswordResetConfirmView
+from django.urls import reverse_lazy
+from .forms import RegistrationForm
+from django.views import View
+from .forms import CustomLoginForm, CustomResetPasswordForm
 # Create your views here.
 def homepage(request):
     return render(request, "homepage.html")
@@ -21,44 +25,29 @@ def carrinho(request):
     context = {'itens_do_carrinho': itens_do_carrinho}
     return render(request, 'carrinho.html', context)
 
-def login_view(request):
-    if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            request.session['loggedin'] = True # Definindo a variável loggedin na sessão
-            return redirect('homepage')
-        else:
-            error_message = 'Usuário ou senha incorretos'
-    else:
-        error_message = ''
-    return render(request, 'login.html', {'error_message': error_message})
-def my_view(request):
-    if request.session.get('loggedin', False):
-        # O usuário está logado, execute o código aqui
-        pass
-    else:
-        # O usuário não está logado, redirecione para a página de login
-        return redirect('login.html')
+
+
+def sair(request):
+    logout(request)
+    return redirect('homepage.html')
 
 
 def cadastrar_usuario(request):
-  if request.method == 'POST':
-    email = request.POST['email']
-    password = request.POST['password']
-    phone = request.POST['phone']
-    cpf = request.POST['cpf']
+    if request.method == 'POST':
+        form = RegistrationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('login.html')
+    else:
+        form = RegistrationForm()
+    return render(request, 'criar_conta.html', {'form': form})
 
-    user = User.objects.create_user(username=email, email=email, password=password)
-    user.phone = phone
-    user.cpf = cpf
-    user.save()
-
-    return redirect('login.html')
-
-  return render(request, 'criar_conta.html')
+    return render(request, 'homepage.html')
+def profile(request):
+    return render(request, 'homepage.html')
+def logout_view(request):
+    logout(request)
+    return redirect('/')
 
 @login_required
 def editar_perfil(request):
@@ -82,14 +71,56 @@ def editar_perfil(request):
 
 def recuperar_senha(request):
     if request.method == 'POST':
-        form = RecuperarSenhaForm(request.POST)
+        form = PasswordResetForm(request.POST)
         if form.is_valid():
-            email = form.cleaned_data['email']
-            PasswordResetForm({'email': email}).save(request=request, use_https=request.is_secure(), email_template_name='registration/password_reset_email.html')
+            form.save(
+                request=request,
+                use_https=request.is_secure(),
+                email_template_name='password_reset_email.html',
+                subject_template_name='password_reset_subject.txt',
+            )
+            return render(request, 'password_reset_done.html')
     else:
-        form = RecuperarSenhaForm()
+        form = PasswordResetForm()
     return render(request, 'recuperar_senha.html', {'form': form})
 
+
+Usuario = get_user_model()
+
+class CustomPasswordResetConfirmView(PasswordResetConfirmView):
+    form_class = CustomResetPasswordForm
+    success_url = reverse_lazy('login')
+    template_name = 'recuperar_senha_confirm.html'
+
+class CustomResetPasswordView(View):
+    def get(self, request, *args, **kwargs):
+        form = CustomLoginForm()
+        context = {'form': form}
+        return render(request, 'recuperar_senha.html', context)
+
+    def post(self, request, *args, **kwargs):
+        form = CustomLoginForm(request.POST)
+
+        if form.is_valid():
+            email = form.cleaned_data.get('email')
+            user = Usuario.objects.filter(email=email).first()
+            if user:
+                form = PasswordResetForm({'email': user.email})
+                if form.is_valid():
+                    form.save(
+                        request=request,
+                        use_https=request.is_secure(),
+                        token_generator=default_token_generator,
+                        email_template_name='recuperar_senha_email.html',
+                        subject_template_name='recuperar_senha_subject.txt',
+                    )
+                return redirect('recuperar_senha_sucesso')
+        context = {'form': form}
+        return render(request, 'recuperar_senha.html', context)
+
+class CustomPasswordResetSuccessView(View):
+    def get(self, request, *args, **kwargs):
+        return render(request, 'recuperar_senha_sucesso.html')
 
 
 

@@ -5,6 +5,10 @@
   <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
+     <label>
+    <input type="checkbox" name="remember_me">
+    Lembrar-me
+  </label>
     <button type="submit">Entrar</button>
   </form>
   <p>Não tem uma conta? <a href="{% url 'criar_conta' %}">Criar uma nova conta</a></p>

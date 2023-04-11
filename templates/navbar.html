@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-warning navbar-container">
   <div class="container-fluid">
-    <a class="navbar-brand text-black" href="#">Minha Loja</a>
+    <a class="navbar-brand text-black" href="/">ShocK Eletrônicos</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -24,13 +24,8 @@
           </a>
           <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
             <li><a class="dropdown-item" href="#">Eletrônicos</a></li>
-            <li><a class="dropdown-item" href="#">Celulares</a></li>
-              <li><a class="dropdown-item" href="#">Avião</a></li>
-              <li><a class="dropdown-item" href="#">Carro</a></li>
-              <li><a class="dropdown-item" href="#">Impressoras</a></li>
-              <li><a class="dropdown-item" href="#">Gabinetes</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="#">Todas as categorias</a></li>
+            <li><a class="dropdown-item" href="#">Utilidades Domésticas</a></li>
+              <li><a class="dropdown-item" href="#">Lazer</a></li>
           </ul>
         </li>
       </ul>
@@ -38,6 +33,20 @@
         <input class="form-control me-2" type="search" placeholder="Pesquisar" aria-label="Pesquisar">
         <button class="btn btn-outline-dark" type="submit">Buscar</button>
       </form>
+      <ul class="navbar-nav">
+        {% if user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link text-black" href="{% url 'editar_perfil' %}">Editar Perfil</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-black" href="{% url 'logout' %}">Sair</a>
+          </li>
+        {% else %}
+          <li class="nav-item">
+            <a class="nav-link text-black" href="{% url 'login' %}">Login</a>
+          </li>
+        {% endif %}
+      </ul>
     </div>
   </div>
 </nav>
