@@ -1,7 +1,7 @@
 # url - #view - template
 
 from django.urls import path, include
-from.views import homepage, contato, lista_produtos, carrinho, cadastrar_usuario, editar_perfil, recuperar_senha, logout_view
+from.views import homepage, contato, lista_produtos, carrinho, cadastrar_usuario, editar_perfil, recuperar_senha, logout_view, pagamento, checkout
 from django.contrib.auth.views import LoginView
 from . import views
 
@@ -18,4 +18,6 @@ urlpatterns = [
     path('criar_conta/', cadastrar_usuario, name='criar_conta'),
     path('recuperar_senha/', recuperar_senha,name ='recuperar_senha'),
     path('accounts/profile/', views.profile, name='profile'),
+    path('pagamento/', pagamento, name='pagamento'),
+    path('checkout/', checkout, name='checkout'),
 ]

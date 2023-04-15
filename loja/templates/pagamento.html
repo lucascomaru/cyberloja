@@ -1,10 +1,44 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'base.html' %}
 
-</body>
-</html>
+{% block content %}
+
+
+<form action="https://pagseguro.uol.com.br/checkout/v2/payment.html" method="post">
+  <input type="hidden" name="currency" value="BRL">
+  <input type="hidden" name="receiverEmail" value="seuemail@seusite.com.br">
+  <input type="hidden" name="itemId1" value="1">
+  <input type="hidden" name="itemDescription1" value="Descrição do Produto">
+  <input type="hidden" name="itemAmount1" value="100.00">
+  <input type="hidden" name="itemQuantity1" value="1">
+  <input type="hidden" name="notificationURL" value="https://seusite.com.br/notificacao_pagseguro">
+  <input type="hidden" name="reference" value="123">
+  <input type="hidden" name="redirectURL" value="https://seusite.com.br/pagina_de_retorno">
+  <input type="hidden" name="senderName" value="Nome do Cliente">
+  <input type="hidden" name="senderEmail" value="emaildocliente@provedor.com">
+  <input type="hidden" name="senderAreaCode" value="11">
+  <input type="hidden" name="senderPhone" value="999999999">
+  <input type="hidden" name="shippingType" value="3">
+  <input type="hidden" name="shippingAddressRequired" value="false">
+  <input type="submit" value="Pagar com Cartão de Crédito">
+</form>
+
+<form action="https://pagseguro.uol.com.br/checkout/v2/payment.html" method="post">
+  <input type="hidden" name="currency" value="BRL">
+  <input type="hidden" name="receiverEmail" value="seuemail@seusite.com.br">
+  <input type="hidden" name="itemId1" value="1">
+  <input type="hidden" name="itemDescription1" value="Descrição do Produto">
+  <input type="hidden" name="itemAmount1" value="100.00">
+  <input type="hidden" name="itemQuantity1" value="1">
+  <input type="hidden" name="notificationURL" value="https://seusite.com.br/notificacao_pagseguro">
+  <input type="hidden" name="reference" value="123">
+  <input type="hidden" name="redirectURL" value="https://seusite.com.br/pagina_de_retorno">
+  <input type="hidden" name="senderName" value="Nome do Cliente">
+  <input type="hidden" name="senderEmail" value="emaildocliente@provedor.com">
+  <input type="hidden" name="senderAreaCode" value="11">
+  <input type="hidden" name="senderPhone" value="999999999">
+  <input type="hidden" name="shippingType" value="3">
+  <input type="hidden" name="shippingAddressRequired" value="false">
+  <input type="submit" value="Pagar com Pix">
+</form>
+
+{% endblock %}
