@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>Checkout</h1>
+  <p>Confirme seu pedido abaixo:</p>
+  <hr>
+  <div>
+    <h3>Produto</h3>
+    <p>Nome do produto: Exemplo de produto</p>
+    <p>Preço: R$ 10,00</p>
+  </div>
+  <hr>
+  <h4>Forma de Pagamento</h4>
+  <div class="form-check">
+    <input class="form-check-input" type="radio" name="paymentMethod" id="creditCard" value="creditCard" checked>
+    <label class="form-check-label" for="creditCard">
+      Cartão de Crédito
+    </label>
+  </div>
+  <div class="form-check">
+    <input class="form-check-input" type="radio" name="paymentMethod" id="boleto" value="boleto">
+    <label class="form-check-label" for="boleto">
+      Boleto Bancário
+    </label>
+  </div>
+  <hr>
+  <button id="checkout-button">Pagar agora</button>
+
+  <script src="https://js.stripe.com/v3/"></script>
+  <script>
+    var stripe = Stripe('{{ STRIPE_PUBLIC_KEY }}');
+
+    document.getElementById('checkout-button').addEventListener('click', function() {
+      stripe.redirectToCheckout({
+        sessionId: '{{ session_id }}'
+      }).then(function(result) {
+        console.log(result.error.message);
+      });
+    });
+  </script>
+{% endblock %}

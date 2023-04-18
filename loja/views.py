@@ -10,11 +10,10 @@ from .forms import RegistrationForm
 from django.views import View
 from .forms import CustomLoginForm, CustomResetPasswordForm
 from django.shortcuts import render
-from django.http import HttpResponse
-from django.views.decorators.csrf import csrf_exempt
-from pagseguro.api import PagSeguroApi
-
-
+import stripe
+from django.conf import settings
+from dotenv import load_dotenv
+import os
 
 # Create your views here.
 def homepage(request):
@@ -129,32 +128,38 @@ class CustomPasswordResetSuccessView(View):
     def get(self, request, *args, **kwargs):
         return render(request, 'recuperar_senha_sucesso.html')
 
-def pagamento(request):
-    return render(request, "pagamento.html")
+load_dotenv()
 
-@csrf_exempt
+stripe.api_key = os.environ.get('STRIPE_SECRET_KEY')
+
+
 def checkout(request):
-    if request.method == "POST":
-        # Obtenha informações do usuário e do pedido
-        nome = request.POST.get("nome")
-        email = request.POST.get("email")
-        preco = request.POST.get("preco")
+    stripe.api_key = settings.STRIPE_SECRET_KEY
 
-        # Crie uma instância da API do PagSeguro
-        pagseguro = PagSeguroApi(email=PAGSEGURO_EMAIL, token=PAGSEGURO_TOKEN, sandbox=PAGSEGURO_SANDBOX)
 
-        # Adicione itens ao carrinho
-        pagseguro.add_item(id=1, description="Produto 1", amount=preco, quantity=1)
+    price = stripe.Price.create(
+        unit_amount=1000,
+        currency='brl',
+        product='prod_NjXyNriQPULuwz',
+    )
 
-        # Defina o remetente do pagamento
-        pagseguro.set_sender(name=nome, email=email)
 
-        # Gere a URL de pagamento
-        url = pagseguro.get_payment_url()
+    checkout_session = stripe.checkout.Session.create(
+        success_url='http://localhost:8000/success/',
+        cancel_url='http://localhost:8000/cancel/',
+        payment_method_types=['card', 'boleto'],
+        line_items=[{
+            'price': price.id,
+            'quantity': 1,
+        }],
+        mode='payment',
+    )
 
-        return render(request, "checkout.html", {"url": url})
 
-    return render(request, "checkout.html")
+    return render(request, 'checkout.html', {
+        'session_id': checkout_session.id,
+        'STRIPE_PUBLIC_KEY': settings.STRIPE_PUBLIC_KEY,
+    })
 
 
 

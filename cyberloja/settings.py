@@ -11,8 +11,8 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
-from dotenv import load_dotenv
 import os
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -134,6 +134,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 load_dotenv()
 
-PAGSEGURO_EMAIL = os.getenv('PAGSEGURO_EMAIL')
-PAGSEGURO_TOKEN = os.getenv('PAGSEGURO_TOKEN')
-PAGSEGURO_SANDBOX = os.getenv('PAGSEGURO_SANDBOX')
+SECRET_KEY = os.getenv('SECRET_KEY')
+DEBUG = os.getenv('DEBUG') == 'True'
+DATABASE_URL = os.getenv('DATABASE_URL')
+STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
+
