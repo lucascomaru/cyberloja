@@ -130,19 +130,14 @@ class CustomPasswordResetSuccessView(View):
 
 load_dotenv()
 
-stripe.api_key = os.environ.get('STRIPE_SECRET_KEY')
-
+stripe.api_key = os.getenv('STRIPE_SECRET_KEY')
 
 def checkout(request):
-    stripe.api_key = settings.STRIPE_SECRET_KEY
-
-
     price = stripe.Price.create(
         unit_amount=1000,
         currency='brl',
         product='prod_NjXyNriQPULuwz',
     )
-
 
     checkout_session = stripe.checkout.Session.create(
         success_url='http://localhost:8000/success/',
@@ -154,6 +149,11 @@ def checkout(request):
         }],
         mode='payment',
     )
+
+    return render(request, 'checkout.html', {
+        'session_id': checkout_session.id,
+        'STRIPE_PUBLIC_KEY': os.getenv('STRIPE_PUBLIC_KEY'), # Define a chave pública do Stripe como variável de ambiente
+    })
 
 
     return render(request, 'checkout.html', {
