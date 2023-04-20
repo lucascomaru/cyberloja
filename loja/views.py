@@ -14,6 +14,7 @@ import stripe
 from django.conf import settings
 from dotenv import load_dotenv
 import os
+from .models import Produto
 
 # Create your views here.
 def homepage(request):
@@ -160,6 +161,11 @@ def checkout(request):
         'session_id': checkout_session.id,
         'STRIPE_PUBLIC_KEY': settings.STRIPE_PUBLIC_KEY,
     })
+
+def home(request):
+    products = Produto.objects.all()
+    context = {'products': products}
+    return render(request, 'homepage.html', context)
 
 
 
