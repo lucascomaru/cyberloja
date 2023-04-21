@@ -167,6 +167,11 @@ def home(request):
     context = {'products': products}
     return render(request, 'homepage.html', context)
 
+def homepage(request):
+    produto = Produto.objects.get(id=1) # aqui estamos pegando o produto com o ID 1
+    context = {'produto': produto}
+    return render(request, 'homepage.html', context)
+
 
 
 
