@@ -9,12 +9,13 @@ from django.urls import reverse_lazy
 from .forms import RegistrationForm
 from django.views import View
 from .forms import CustomLoginForm, CustomResetPasswordForm
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 import stripe
 from django.conf import settings
 from dotenv import load_dotenv
 import os
 from .models import Produto
+
 
 # Create your views here.
 def homepage(request):
@@ -23,9 +24,9 @@ def homepage(request):
 def contato(request):
     return render(request, "contato.html")
 
-def lista_produtos(request):
-    produtos = Produto.objects.all()
-    return render(request, 'produtos.html', {'produtos': produtos})
+def detalhes_produto(request, produto_id):
+    produto = get_object_or_404(Produto, pk=produto_id)
+    return render(request, 'detalhes_produto.html', {'produto': produto})
 
 def carrinho(request):
     itens_do_carrinho = Carrinho.objects.filter(usuario=request.user)
@@ -162,17 +163,29 @@ def checkout(request):
         'STRIPE_PUBLIC_KEY': settings.STRIPE_PUBLIC_KEY,
     })
 
-def home(request):
-    products = Produto.objects.all()
-    context = {'products': products}
+
+def lista_produtos_recentes(request=None):
+    lista_produtos = Produto.objects.all().order_by('-data_criacao')[0:9]
+    if lista_produtos:
+        produto_destaque = lista_produtos[0]
+        lista_produtos = lista_produtos[1:]  # Exclui o produto_destaque da lista
+    else:
+        produto_destaque = None
+    return {"lista_produtos_recentes": lista_produtos, "produto_destaque": produto_destaque}
+
+def produtos_destaque(request):
+    context = lista_produtos_recentes(request)
     return render(request, 'homepage.html', context)
 
-def homepage(request):
-    produto = Produto.objects.get(id=1) # aqui estamos pegando o produto com o ID 1
-    context = {'produto': produto}
-    return render(request, 'homepage.html', context)
 
-
+def search(request):
+    query = request.GET.get('query')
+    produtos = Produto.objects.filter(nome__icontains=query)
+    context = {
+        'produtos': produtos,
+        'query': query,
+    }
+    return render(request, 'search.html', context)
 
 
 

@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block titulo %}
+Produto {{ produto.nome }}
+{% endblock %}
+
+{% block content %}
+<head>
+    <title>{{ produto.nome }}</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.7/tailwind.min.css">
+    <style>
+        .imagem-produto {
+            max-width: 500px;
+            max-height: 500px;
+        }
+
+        .preco-produto {
+            color: #0070C0;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .botao-carrinho {
+            background-color: #0070C0;
+            color: #FFFFFF;
+            border-radius: 5px;
+            padding: 10px 20px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+
+        .botao-carrinho:hover {
+            background-color: #005293;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mx-auto mt-10 mb-20">
+        <div class="row">
+            <div class="col-md-6 col-lg-5">
+                <img src="{{ produto.imagem.url }}" alt="{{ produto.nome }}" class="rounded-md shadow-lg mb-10 imagem-produto">
+            </div>
+            <div class="col-md-6 col-lg-7 pl-10 lg:pl-20">
+                <h1 class="text-3xl font-bold mb-5">{{ produto.nome }}</h1>
+                <span class="block mb-5 preco-produto">R$ {{ produto.preco }}</span>
+                <button class="botao-carrinho">Adicionar ao carrinho</button>
+                <h2 class="mt-10 font-bold">Descrição:</h2>
+                <p>{{ produto.descricao }}</p>
+            </div>
+        </div>
+    </div>
+</body>
+{% endblock %}

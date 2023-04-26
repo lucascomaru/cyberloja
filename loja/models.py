@@ -1,13 +1,21 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 
-
+LISTA_CATEGORIAS = (
+    ("ELETRONICOS", "Eletrônicos"),
+    ("UTILIDADES_DOMESTICAS", "Utilidades Domésticas"),
+    ("LAZER", "Lazer"),
+    ("OUTROS", "Outros"),
+)
 
 class Produto(models.Model):
     nome = models.CharField(max_length=255)
     descricao = models.TextField()
     preco = models.DecimalField(max_digits=6, decimal_places=2)
     imagem = models.ImageField(upload_to='produtos')
+    categoria = models.CharField(max_length=21, choices=LISTA_CATEGORIAS, default='OUTROS')
+    data_criacao = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return self.nome
