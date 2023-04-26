@@ -14,7 +14,7 @@ import stripe
 from django.conf import settings
 from dotenv import load_dotenv
 import os
-from .models import Produto
+from .models import Produto, Categoria
 
 
 # Create your views here.
@@ -33,7 +33,22 @@ def carrinho(request):
     context = {'itens_do_carrinho': itens_do_carrinho}
     return render(request, 'carrinho.html', context)
 
+def produtos_por_categoria(request, categoria_nome):
+    categoria = Categoria.objects.filter(nome=categoria_nome).first()
 
+    if categoria:
+        produtos = Produto.objects.filter(categoria=categoria)
+    else:
+        produtos = Produto.objects.none()
+
+    # Adicione esta linha para imprimir os produtos no console
+    print("Produtos:", produtos)
+
+    context = {
+        'categoria': categoria,
+        'produtos': produtos,
+    }
+    return render(request, 'produtos_por_categoria.html', context)
 
 def sair(request):
     logout(request)

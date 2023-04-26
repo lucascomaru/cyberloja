@@ -7,24 +7,20 @@
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav me-auto">
         <li class="nav-item">
-          <a class="nav-link text-black" href="#">Produtos</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link text-black" href="#">Promoções</a>
-        </li>
-        <li class="nav-item">
           <a class="nav-link text-black" href="{% url 'contato' %}">Contato</a>
         </li>
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle text-black" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Categorias
-          </a>
-          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <li><a class="dropdown-item" href="#">Eletrônicos</a></li>
-            <li><a class="dropdown-item" href="#">Utilidades Domésticas</a></li>
-              <li><a class="dropdown-item" href="#">Lazer</a></li>
-          </ul>
+            <a class="nav-link dropdown-toggle text-black" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Categorias
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li><a class="dropdown-item" href="{% url 'produtos_por_categoria' categoria_nome='ELETRONICOS' %}">Eletrônicos</a></li>
+                <li><a class="dropdown-item" href="{% url 'produtos_por_categoria' categoria_nome='UTILIDADES_DOMESTICAS' %}">Utilidades Domésticas</a></li>
+                <li><a class="dropdown-item" href="{% url 'produtos_por_categoria' categoria_nome='LAZER' %}">Lazer</a></li>
+                <li><a class="dropdown-item" href="{% url 'produtos_por_categoria' categoria_nome='OUTROS' %}">Outros</a></li>
+            </ul>
         </li>
+
       </ul>
       <form class="d-flex">
         <input class="form-control me-2" type="search" placeholder="Pesquisar" aria-label="Pesquisar">

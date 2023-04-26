@@ -23,30 +23,44 @@ Produto {{ produto.nome }}
             font-weight: bold;
         }
 
-        .botao-carrinho {
-            background-color: #0070C0;
-            color: #FFFFFF;
+        .botao-carrinho,
+        .botao-comprar {
             border-radius: 5px;
             padding: 10px 20px;
             margin-top: 10px;
             cursor: pointer;
         }
 
+        .botao-carrinho {
+            background-color: #0070C0;
+            color: #FFFFFF;
+        }
+
         .botao-carrinho:hover {
             background-color: #005293;
+        }
+
+        .botao-comprar {
+            background-color: #FF9900;
+            color: #FFFFFF;
+        }
+
+        .botao-comprar:hover {
+            background-color: #CC7A00;
         }
     </style>
 </head>
 <body>
     <div class="container mx-auto mt-10 mb-20">
         <div class="row">
-            <div class="col-md-6 col-lg-5">
-                <img src="{{ produto.imagem.url }}" alt="{{ produto.nome }}" class="rounded-md shadow-lg mb-10 imagem-produto">
+            <div class="col-md-6 col-lg-5 flex justify-center">
+                <img src="{{ produto.imagem.url }}" alt="{{ produto.nome }}" class="rounded-md shadow-lg mb-10 imagem-produto mr-10 lg:mr-20">
             </div>
-            <div class="col-md-6 col-lg-7 pl-10 lg:pl-20">
+            <div class="col-md-6 col-lg-7 pl-20 lg:pl-40 mt-10">
                 <h1 class="text-3xl font-bold mb-5">{{ produto.nome }}</h1>
                 <span class="block mb-5 preco-produto">R$ {{ produto.preco }}</span>
                 <button class="botao-carrinho">Adicionar ao carrinho</button>
+                <button class="botao-comprar">Comprar</button>
                 <h2 class="mt-10 font-bold">Descrição:</h2>
                 <p>{{ produto.descricao }}</p>
             </div>
