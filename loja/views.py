@@ -9,12 +9,13 @@ from django.urls import reverse_lazy
 from .forms import RegistrationForm
 from django.views import View
 from .forms import CustomLoginForm, CustomResetPasswordForm
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import  get_object_or_404
 import stripe
 from django.conf import settings
 from dotenv import load_dotenv
 import os
-from .models import Produto, Categoria
+from .models import Produto
+
 
 
 # Create your views here.
@@ -57,14 +58,17 @@ def produtos_por_categoria(request, categoria_nome):
     else:
         produtos = Produto.objects.none()
 
-    # Adicione esta linha para imprimir os produtos no console
-    print("Produtos:", produtos)
 
     context = {
         'categoria': categoria,
         'produtos': produtos,
     }
     return render(request, 'produtos_por_categoria.html', context)
+
+
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login
+
 
 def sair(request):
     logout(request)
@@ -204,19 +208,23 @@ def lista_produtos_recentes(request=None):
         produto_destaque = None
     return {"lista_produtos_recentes": lista_produtos, "produto_destaque": produto_destaque}
 
+
 def produtos_destaque(request):
     context = lista_produtos_recentes(request)
     return render(request, 'homepage.html', context)
 
 
 def search(request):
-    query = request.GET.get('query')
+    query = request.GET.get('q', '').lower()
+    if query == 'tv' or query == 'televisão':
+        query = 'televisão'
+
     produtos = Produto.objects.filter(nome__icontains=query)
     context = {
-        'produtos': produtos,
         'query': query,
+        'produtos': produtos,
     }
-    return render(request, 'search.html', context)
+    return render(request, 'search_results.html', context)
 
 
 

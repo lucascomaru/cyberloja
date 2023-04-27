@@ -11,19 +11,30 @@
     <script src="https://cdnjs.cloudflare-7Ji+qbH1E7Bl+kwTQ8hlZsYe4flyUX.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512tz+xCs7+kjeac1Hjy4JYES00n2aI1Cq3+qZOZD+NJvRJ4MteL+9W4Mhw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.5.0/js/bootstrap.min.js" integrity="sha512-0FmslNvA1V7XnX9jqC6n56ps6qbhbU6gJU6n2zZ7xu6b2hV7q1OLq/n8d7sqirKoRlncDbB5l5B1cZz5r5f20w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-
-
     {% block head %}
     {% endblock %}
 </head>
 <body>
     {% include 'navbar.html' %}
+
+    <!-- Inserir o bloco de mensagens aqui -->
+    {% if messages %}
+    <div class="container mt-3">
+        <div class="row">
+            <div class="col">
+                <ul class="messages">
+                    {% for message in messages %}
+                    <li>{% if message.tags %} class="alert alert-{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
     {% block content %}
     {% endblock %}
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
-</body>
-</html>
-
 </body>
 </html>

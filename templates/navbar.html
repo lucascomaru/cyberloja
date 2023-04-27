@@ -22,10 +22,11 @@
         </li>
 
       </ul>
-      <form class="d-flex">
-        <input class="form-control me-2" type="search" placeholder="Pesquisar" aria-label="Pesquisar">
+      <form class="d-flex" action="{% url 'search' %}" method="get">
+        <input class="form-control me-2" type="search" name="q" placeholder="Pesquisar" aria-label="Pesquisar">
         <button class="btn btn-outline-dark" type="submit">Buscar</button>
-      </form>
+    </form>
+
       <ul class="navbar-nav">
         {% if user.is_authenticated %}
           <li class="nav-item">
