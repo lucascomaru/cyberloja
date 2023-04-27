@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import Produto, Carrinho
+from .models import Produto, Carrinho, LISTA_CATEGORIAS
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth import  get_user_model, logout
@@ -34,7 +34,23 @@ def carrinho(request):
     return render(request, 'carrinho.html', context)
 
 def produtos_por_categoria(request, categoria_nome):
-    categoria = Categoria.objects.filter(nome=categoria_nome).first()
+    categoria = None
+    for cat in LISTA_CATEGORIAS:
+        if cat[0] == categoria_nome:
+            categoria = cat
+            break
+
+    if categoria:
+        produtos = Produto.objects.filter(categoria=categoria[0])
+    else:
+        produtos = Produto.objects.none()
+
+    context = {
+        'categoria': categoria[1],
+        'produtos': produtos,
+    }
+    return render(request, 'produtos_por_categoria.html', context)
+
 
     if categoria:
         produtos = Produto.objects.filter(categoria=categoria)
@@ -201,6 +217,8 @@ def search(request):
         'query': query,
     }
     return render(request, 'search.html', context)
+
+
 
 
 
