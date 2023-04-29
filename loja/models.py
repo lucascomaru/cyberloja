@@ -3,6 +3,7 @@ from django.contrib.auth.models import User, AbstractUser, Group, Permission
 from django.utils import timezone
 from .validators import validar_cpf
 from django.conf import settings
+from django.core.validators import RegexValidator
 
 LISTA_CATEGORIAS = (
     ("ELETRONICOS", "Eletrônicos"),
@@ -29,9 +30,11 @@ class Categoria(models.Model):
         return self.nome
 
 class UsuarioPersonalizado(AbstractUser):
+    nome = models.CharField(max_length=255, null=True, blank=True, verbose_name='Nome')
     telefone = models.CharField(max_length=20, null=True, blank=True, verbose_name='Telefone')
     cpf = models.CharField(max_length=14, validators=[validar_cpf], verbose_name='CPF')
-
+    email = models.EmailField(unique=True, verbose_name='Email')
+    username = models.CharField(max_length=255, unique=True, verbose_name='Nome de usuário')
     groups = models.ManyToManyField(
         Group,
         verbose_name='groups',

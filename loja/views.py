@@ -67,15 +67,22 @@ def produtos_por_categoria(request, categoria_nome):
 
 def cadastrar_usuario(request):
     if request.method == 'POST':
-        form = RegistrationForm(request.POST)
+        form = RegistroForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect('login.html')
+            user = form.save() #correção necessária
+            user.refresh_from_db()  # para pegar os campos adicionais
+            user.usuario_personalizado.telefone = form.cleaned_data.get('telefone')
+            user.usuario_personalizado.cpf = form.cleaned_data.get('cpf')
+            user.usuario_personalizado.nome_de_usuario = form.cleaned_data.get('nome_de_usuario')
+            user.usuario_personalizado.nome = form.cleaned_data.get('nome')
+            user.save()
+            raw_password = form.cleaned_data.get('password1')
+            user = authenticate(username=user.username, password=raw_password)
+            login(request, user)
+            return redirect('home')
     else:
-        form = RegistrationForm()
+        form = RegistroForm()
     return render(request, 'criar_conta.html', {'form': form})
-
-    return render(request, 'homepage.html')
 
 def login(request):
     if request.method == 'POST':

@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultados da Pesquisa</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.7/tailwind.min.css">
+</head>
+<body>
+    <div class="container mx-auto mt-10">
+        <h1 class="text-3xl font-bold mb-5">Resultados da pesquisa para: {{ query }}</h1>
+
+        {% if produtos %}
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {% for produto in produtos %}
+                    <a href="produto/{{ produto.id }}" class="bg-white rounded-lg overflow-hidden shadow-lg">
+                        <img src="{{ produto.imagem.url }}" class="w-full">
+                        <div class="p-4">
+                            <h2 class="text-xl font-bold mb-2">{{ produto.nome }}</h2>
+                            <span class="text-lg font-bold text-green-500">R$ {{ produto.preco }}</span>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>Nenhum produto encontrado para a pesquisa.</p>
+        {% endif %}
+    </div>
+</body>
+{% endblock %}

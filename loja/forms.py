@@ -17,7 +17,7 @@ class RegistrationForm(UserCreationForm):
         fields = ('email', 'telefone', 'cpf', 'password1', 'password2')
 
 class LoginForm(forms.Form):
-    email = forms.EmailField(label='Endereço de email')
+    username = forms.CharField(label='Nome de usuário ou email')
     password = forms.CharField(label='Senha', widget=forms.PasswordInput)
     remember_me = forms.BooleanField(label='Lembrar Usuário', required=False)
 
