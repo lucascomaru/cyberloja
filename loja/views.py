@@ -8,13 +8,12 @@ from django.contrib.auth.views import PasswordResetConfirmView
 from django.urls import reverse_lazy
 from .forms import RegistrationForm
 from django.views import View
-from .forms import CustomLoginForm, CustomResetPasswordForm
+from .forms import CustomResetPasswordForm, CustomAuthenticationForm
 from django.shortcuts import  get_object_or_404
 import stripe
 from django.conf import settings
 from dotenv import load_dotenv
 import os
-from .models import Produto
 
 
 
@@ -66,15 +65,6 @@ def produtos_por_categoria(request, categoria_nome):
     return render(request, 'produtos_por_categoria.html', context)
 
 
-from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login
-
-
-def sair(request):
-    logout(request)
-    return redirect('homepage.html')
-
-
 def cadastrar_usuario(request):
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
@@ -86,6 +76,17 @@ def cadastrar_usuario(request):
     return render(request, 'criar_conta.html', {'form': form})
 
     return render(request, 'homepage.html')
+
+def login(request):
+    if request.method == 'POST':
+        form = CustomAuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            # login successful
+            # redirect user to home page or some other page
+            pass
+    else:
+        form = CustomAuthenticationForm(request)
+    return render(request, 'login.html', {'form': form})
 def profile(request):
     return render(request, 'homepage.html')
 def logout_view(request):

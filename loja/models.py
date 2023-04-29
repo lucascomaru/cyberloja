@@ -1,6 +1,8 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AbstractUser, Group, Permission
 from django.utils import timezone
+from .validators import validar_cpf
+from django.conf import settings
 
 LISTA_CATEGORIAS = (
     ("ELETRONICOS", "Eletrônicos"),
@@ -26,8 +28,35 @@ class Categoria(models.Model):
     def __str__(self):
         return self.nome
 
+class UsuarioPersonalizado(AbstractUser):
+    telefone = models.CharField(max_length=20, null=True, blank=True, verbose_name='Telefone')
+    cpf = models.CharField(max_length=14, validators=[validar_cpf], verbose_name='CPF')
+
+    groups = models.ManyToManyField(
+        Group,
+        verbose_name='groups',
+        blank=True,
+        related_name="%(app_label)s_%(class)s_related",
+        related_query_name="%(app_label)s_%(class)ss",
+    )
+
+    user_permissions = models.ManyToManyField(
+        Permission,
+        verbose_name='user_permissions',
+        blank=True,
+        related_name="%(app_label)s_%(class)s_related",
+        related_query_name="%(app_label)s_%(class)ss",
+    )
+
+    class Meta:
+        verbose_name = 'Usuário'
+        verbose_name_plural = 'Usuários'
+
+    def __str__(self):
+        return self.username
+
 class Carrinho(models.Model):
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     produto = models.ForeignKey(Produto, on_delete=models.CASCADE)
     quantidade = models.IntegerField(default=1)
 
@@ -35,7 +64,7 @@ class Carrinho(models.Model):
         return f'{self.quantidade}x {self.produto.nome}'
 
 class Pedido(models.Model):
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     produtos = models.ManyToManyField(Produto)
     valor_total = models.DecimalField(max_digits=6, decimal_places=2)
     endereco = models.CharField(max_length=255)

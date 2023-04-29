@@ -1,26 +1,37 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
+from .models import UsuarioPersonalizado
+from .validators import validar_cpf
+from django.contrib.auth.forms import AuthenticationForm
+
+
 
 class RegistrationForm(UserCreationForm):
     email = forms.EmailField(max_length=254, help_text='Obrigatório, Coloque um e-mail válido.')
-    phone = forms.CharField(max_length=20, help_text='Obrigatório, Coloque um número válido.')
-    cpf = forms.CharField(max_length=14, help_text='Obrigatório, Coloque um CPF válido.')
+    telefone = forms.CharField(max_length=20, help_text='Obrigatório, Coloque um número válido.')
+    cpf = forms.CharField(max_length=14, help_text='Obrigatório, Coloque um CPF válido.', validators=[validar_cpf])
 
     class Meta:
-        model = User
-        fields = ('email', 'phone', 'cpf', 'password1', 'password2')
+        model = UsuarioPersonalizado
+        fields = ('email', 'telefone', 'cpf', 'password1', 'password2')
 
 class LoginForm(forms.Form):
-    username = forms.CharField(label='Usuário')
+    email = forms.EmailField(label='Endereço de email')
     password = forms.CharField(label='Senha', widget=forms.PasswordInput)
     remember_me = forms.BooleanField(label='Lembrar Usuário', required=False)
 
 Usuario = get_user_model()
 
-class CustomLoginForm(forms.Form):
-    email = forms.EmailField(label='Endereço de email')
+class CustomAuthenticationForm(AuthenticationForm):
+    username = forms.CharField(label='E-mail')
+    password = forms.CharField(label='Senha', widget=forms.PasswordInput)
+
+    error_messages = {
+        'invalid_login': 'E-mail ou senha inválidos',
+        'inactive': 'Esta conta está inativa',
+    }
+
 
 class CustomResetPasswordForm(forms.Form):
     senha_nova = forms.CharField(

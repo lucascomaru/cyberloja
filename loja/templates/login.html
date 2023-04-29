@@ -1,16 +1,38 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <h1>Login</h1>
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-     <label>
-    <input type="checkbox" name="remember_me">
-    Lembrar-me
-  </label>
-    <button type="submit">Entrar</button>
-  </form>
-  <p>Não tem uma conta? <a href="{% url 'criar_conta' %}">Criar uma nova conta</a></p>
-  <p>Esqueceu a senha? <a href="{% url 'recuperar_senha' %}">Recuperar senha</a></p>
+  <div class="container mt-5">
+    <h1 class="text-center">Login</h1>
+    <div class="row justify-content-center">
+      <form method="post">
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+          <div class="alert alert-danger" role="alert">{{ form.non_field_errors }}</div>
+        {% endif %}
+        <div class="form-group text-center">
+          {{ form.username.label_tag }}
+          {{ form.username }}
+          {% if form.username.errors %}
+            <div class="alert alert-danger" role="alert">{{ form.username.errors }}</div>
+          {% endif %}
+        </div>
+        <div class="form-group text-center">
+          {{ form.password.label_tag }}
+          {{ form.password }}
+          {% if form.password.errors %}
+            <div class="alert alert-danger" role="alert">{{ form.password.errors }}</div>
+          {% endif %}
+        </div>
+         <label class="text-center d-block mt-3">
+          <input type="checkbox" name="remember_me">
+          Lembrar-me
+        </label>
+        <button type="submit" class="btn btn-primary mt-3 mx-auto d-block">Entrar</button>
+      </form>
+    </div>
+    <div class="row justify-content-center mt-3 text-center">
+      <p>Não tem uma conta? <a href="{% url 'criar_conta' %}">Criar uma nova conta</a></p>
+      <p>Esqueceu a senha? <a href="{% url 'recuperar_senha' %}">Recuperar senha</a></p>
+    </div>
+  </div>
 {% endblock %}
