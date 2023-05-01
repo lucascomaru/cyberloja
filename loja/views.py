@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from .models import Produto, Carrinho, LISTA_CATEGORIAS
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordResetForm
-from django.contrib.auth import  get_user_model, logout
+from django.contrib.auth import  get_user_model, logout, authenticate
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.views import PasswordResetConfirmView
 from django.urls import reverse_lazy
@@ -14,6 +14,7 @@ import stripe
 from django.conf import settings
 from dotenv import load_dotenv
 import os
+from django.db import IntegrityError
 
 
 
@@ -67,21 +68,23 @@ def produtos_por_categoria(request, categoria_nome):
 
 def cadastrar_usuario(request):
     if request.method == 'POST':
-        form = RegistroForm(request.POST)
+        form = RegistrationForm(request.POST)
         if form.is_valid():
-            user = form.save() #correção necessária
-            user.refresh_from_db()  # para pegar os campos adicionais
-            user.usuario_personalizado.telefone = form.cleaned_data.get('telefone')
-            user.usuario_personalizado.cpf = form.cleaned_data.get('cpf')
-            user.usuario_personalizado.nome_de_usuario = form.cleaned_data.get('nome_de_usuario')
-            user.usuario_personalizado.nome = form.cleaned_data.get('nome')
-            user.save()
-            raw_password = form.cleaned_data.get('password1')
-            user = authenticate(username=user.username, password=raw_password)
-            login(request, user)
-            return redirect('home')
+            try:
+                user = form.save()
+                user.refresh_from_db()  # para pegar os campos adicionais
+                user.usuario_personalizado.telefone = form.cleaned_data.get('telefone')
+                user.usuario_personalizado.cpf = form.cleaned_data.get('cpf')
+                user.usuario_personalizado.nome = form.cleaned_data.get('nome')
+                user.save()
+                raw_password = form.cleaned_data.get('password1')
+                user = authenticate(username=user.username, password=raw_password)
+                login(request, user)
+                return redirect('home')
+            except IntegrityError:
+                form.add_error('username', 'Usuário ou e-mail já existem.')
     else:
-        form = RegistroForm()
+        form = RegistrationForm()
     return render(request, 'criar_conta.html', {'form': form})
 
 def login(request):

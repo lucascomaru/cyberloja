@@ -9,15 +9,25 @@ from django.contrib.auth.forms import AuthenticationForm
 
 class RegistrationForm(UserCreationForm):
     email = forms.EmailField(max_length=254, help_text='Obrigatório, Coloque um e-mail válido.')
+    confirm_email = forms.EmailField(max_length=254, label='Confirme seu e-mail', widget=forms.EmailInput(attrs={'autocomplete': 'email'}))
     telefone = forms.CharField(max_length=20, help_text='Obrigatório, Coloque um número válido.')
     cpf = forms.CharField(max_length=14, help_text='Obrigatório, Coloque um CPF válido.', validators=[validar_cpf])
+    nome = forms.CharField(max_length=100, help_text='Obrigatório, Coloque seu nome completo.')
 
     class Meta:
         model = UsuarioPersonalizado
-        fields = ('email', 'telefone', 'cpf', 'password1', 'password2')
+        fields = ('nome', 'email', 'confirm_email', 'telefone', 'cpf', 'password1', 'password2')
+
+    def clean(self):
+        cleaned_data = super().clean()
+        email = cleaned_data.get('email')
+        confirm_email = cleaned_data.get('confirm_email')
+        if email and confirm_email and email != confirm_email:
+            self.add_error('confirm_email', 'Os e-mails não são iguais.')
+
 
 class LoginForm(forms.Form):
-    username = forms.CharField(label='Nome de usuário ou email')
+    email = forms.EmailField(label='E-mail')
     password = forms.CharField(label='Senha', widget=forms.PasswordInput)
     remember_me = forms.BooleanField(label='Lembrar Usuário', required=False)
 
