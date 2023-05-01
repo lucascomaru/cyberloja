@@ -18,6 +18,9 @@
                 </td>
                 <td>
                     {{ form.email }}
+                    {% for error in form.email.errors %}
+                        <div class="alert alert-danger" role="alert">{{ error }}</div>
+                    {% endfor %}
                 </td>
             </tr>
             <tr>
@@ -26,6 +29,9 @@
                 </td>
                 <td>
                     {{ form.confirm_email }}
+                    {% for error in form.confirm_email.errors %}
+                        <div class="alert alert-danger" role="alert">{{ error }}</div>
+                    {% endfor %}
                 </td>
             </tr>
             <tr>
@@ -34,6 +40,9 @@
                 </td>
                 <td>
                     {{ form.cpf }}
+                    {% for error in form.cpf.errors %}
+                        <div class="alert alert-danger" role="alert">{{ error }}</div>
+                    {% endfor %}
                 </td>
             </tr>
             <tr>
@@ -42,6 +51,9 @@
                 </td>
                 <td>
                     {{ form.telefone }}
+                    {% for error in form.telefone.errors %}
+                        <div class="alert alert-danger" role="alert">{{ error }}</div>
+                    {% endfor %}
                 </td>
             </tr>
             <tr>
@@ -50,6 +62,9 @@
                 </td>
                 <td>
                     {{ form.password1 }}
+                    {% for error in form.password1.errors %}
+                        <div class="alert alert-danger" role="alert">{{ error }}</div>
+                    {% endfor %}
                 </td>
             </tr>
             <tr>
@@ -58,10 +73,16 @@
                 </td>
                 <td>
                     {{ form.password2 }}
+                    {% for error in form.password2.errors %}
+                        <div class="alert alert-danger" role="alert">{{ error }}</div>
+                    {% endfor %}
                 </td>
             </tr>
         </table>
         <input type="submit" value="Cadastrar">
+        {% for error in form.non_field_errors %}
+            <div class="alert alert-danger" role="alert">{{ error }}</div>
+        {% endfor %}
     </form>
 
     <style>

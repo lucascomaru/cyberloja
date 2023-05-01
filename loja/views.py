@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from .models import Produto, Carrinho, LISTA_CATEGORIAS
+from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth import  get_user_model, logout, authenticate
@@ -14,7 +15,10 @@ import stripe
 from django.conf import settings
 from dotenv import load_dotenv
 import os
-from django.db import IntegrityError
+from .models import UsuarioPersonalizado
+from django.contrib import messages
+from django.contrib.auth.forms import UserChangeForm
+
 
 
 
@@ -65,24 +69,29 @@ def produtos_por_categoria(request, categoria_nome):
     }
     return render(request, 'produtos_por_categoria.html', context)
 
+User = get_user_model()
 
 def cadastrar_usuario(request):
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
         if form.is_valid():
-            try:
-                user = form.save()
-                user.refresh_from_db()  # para pegar os campos adicionais
+            email = form.cleaned_data.get('email')
+            cpf = form.cleaned_data.get('cpf')
+            if User.objects.filter(email=email).exists():
+                form.add_error('email', 'Este e-mail já está em uso.')
+            elif UsuarioPersonalizado.objects.filter(cpf=cpf).exists():
+                form.add_error('cpf', 'Este CPF já está em uso.')
+            else:
+                user = form.save(commit=False)
                 user.usuario_personalizado.telefone = form.cleaned_data.get('telefone')
-                user.usuario_personalizado.cpf = form.cleaned_data.get('cpf')
+                user.usuario_personalizado.cpf = cpf
                 user.usuario_personalizado.nome = form.cleaned_data.get('nome')
                 user.save()
+                user.usuario_personalizado.save()
                 raw_password = form.cleaned_data.get('password1')
                 user = authenticate(username=user.username, password=raw_password)
                 login(request, user)
-                return redirect('home')
-            except IntegrityError:
-                form.add_error('username', 'Usuário ou e-mail já existem.')
+                return redirect('produtos_destaque')
     else:
         form = RegistrationForm()
     return render(request, 'criar_conta.html', {'form': form})
@@ -102,25 +111,32 @@ def profile(request):
 def logout_view(request):
     logout(request)
     return redirect('/')
-
+class CustomUserChangeForm(UserChangeForm):
+    class Meta(UserChangeForm.Meta):
+        model = get_user_model()
 @login_required
 def editar_perfil(request):
-  if request.method == 'POST':
-    user = request.user
-    email = request.POST['email']
-    phone = request.POST['phone']
-    password = request.POST['password']
-    if email != user.email:
-      user.email = email
-      user.username = email
-    if phone != user.phone:
-      user.phone = phone
-    if password:
-      user.set_password(password)
-    user.save()
-    return redirect('homepage.html')
+    if request.method == 'POST':
+        form = CustomUserChangeForm(request.POST, instance=request.user)
+        if form.is_valid():
+            user = form.save(commit=False)
+            password = form.cleaned_data['password']
+            password_confirm = form.cleaned_data['password_confirm']
+            if password and password != password_confirm:
+                messages.error(request, 'As senhas não correspondem.')
+            else:
+                if password:
+                    user.set_password(password)
+                user.save()
+                messages.success(request, 'Seu perfil foi atualizado com sucesso.')
+                return redirect('editar_perfil')
+        else:
+            messages.error(request, 'Por favor, corrija os erros abaixo.')
+    else:
+        form = CustomUserChangeForm(instance=request.user)
 
-  return render(request, 'editar_perfil.html')
+    return render(request, 'editar_perfil.html', {'form': form})
+
 
 
 def recuperar_senha(request):

@@ -7,6 +7,7 @@ from django.contrib.auth.forms import AuthenticationForm
 
 
 
+
 class RegistrationForm(UserCreationForm):
     email = forms.EmailField(max_length=254, help_text='Obrigatório, Coloque um e-mail válido.')
     confirm_email = forms.EmailField(max_length=254, label='Confirme seu e-mail', widget=forms.EmailInput(attrs={'autocomplete': 'email'}))
@@ -41,7 +42,6 @@ class CustomAuthenticationForm(AuthenticationForm):
         'invalid_login': 'E-mail ou senha inválidos',
         'inactive': 'Esta conta está inativa',
     }
-
 
 class CustomResetPasswordForm(forms.Form):
     senha_nova = forms.CharField(

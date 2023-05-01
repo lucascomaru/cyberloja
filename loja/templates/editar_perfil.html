@@ -2,18 +2,66 @@
 
 {% block content %}
 
-<form method="post">
-  {% csrf_token %}
-  <label for="email">Email:</label>
-  <input type="email" id="email" name="email" value="{{ user.email }}" required><br>
+<div class="edit-profile">
+  <h2>Editar perfil</h2>
+  <form method="post">
+    {% csrf_token %}
+    <label for="nome">Nome:</label>
+    <input type="text" id="nome" name="nome" value="{{ user.nome|default_if_none:'' }}"><br>
 
-  <label for="password">Nova Senha:</label>
-  <input type="password" id="password" name="password"><br>
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" value="{{ user.email }}" required><br>
 
-  <label for="phone">Telefone:</label>
-  <input type="tel" id="phone" name="phone" value="{{ user.phone }}" required><br>
+    <label for="password">Nova Senha:</label>
+    <input type="password" id="password" name="password"><br>
 
-  <input type="submit" value="Salvar">
-</form>
+    <label for="password-confirm">Confirme a nova senha:</label>
+    <input type="password" id="password-confirm" name="password-confirm"><br>
+
+    <label for="phone">Telefone:</label>
+    <input type="tel" id="phone" name="phone" value="{{ user.telefone|default_if_none:'' }}" required><br>
+
+    <input type="submit" value="Salvar">
+  </form>
+</div>
+
+<style>
+.edit-profile {
+  width: 50%;
+  margin: auto;
+  text-align: center;
+}
+.edit-profile form {
+  display: inline-block;
+  text-align: left;
+}
+.edit-profile form label {
+  display: block;
+  margin-bottom: 5px;
+}
+.edit-profile form input[type="text"],
+.edit-profile form input[type="email"],
+.edit-profile form input[type="password"],
+.edit-profile form input[type="tel"] {
+  width: 100%;
+  padding: 5px;
+  margin-bottom: 10px;
+}
+.edit-profile form input[type="submit"] {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin-top: 10px;
+  cursor: pointer;
+}
+.edit-profile form input[type="submit"]:hover {
+  background-color: #3e8e41;
+}
+</style>
 
 {% endblock %}
