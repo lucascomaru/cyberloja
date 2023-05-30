@@ -1,32 +1,58 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1>Carrinho de compras</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>Produto</th>
-                <th>Quantidade</th>
-                <th>Preço</th>
-                <th>Total</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in itens_do_carrinho %}
-                <tr>
-                    <td>{{ item.produto.nome }}</td>
-                    <td>{{ item.quantidade }}</td>
-                    <td>R$ {{ item.produto.preco }}</td>
-                    <td>R$ {{ item.quantidade * item.produto.preco }}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-        <tfoot>
-            <tr>
-                <td colspan="3">Total</td>
-                <td>R$ {{ itens_do_carrinho|total_carrinho }}</td>
-                <button class="remover-do-carrinho" data-carrinho-item-id="{{ item.id }}">Remover</button>
-            </tr>
-        </tfoot>
-    </table>
+
+<h1>Carrinho de compras</h1>
+
+{% if carrinho_items %}
+<table>
+  <thead>
+    <tr>
+      <th>Produto</th>
+      <th>Quantidade</th>
+      <th>Preço</th>
+      <th>Subtotal</th>
+      <th>Ações</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in carrinho_items %}
+    <tr>
+      <td>{{ item.produto.nome }}</td>
+      <td>
+        <form method="post" action="{% url 'atualizar_carrinho' %}">
+          {% csrf_token %}
+          <input type="hidden" name="produto_id" value="{{ item.produto.id }}">
+          <input type="number" name="quantidade" value="{{ item.quantidade }}" min="1" required>
+          <button type="submit">Atualizar</button>
+        </form>
+      </td>
+      <td>R$ {{ item.produto.preco }}</td>
+      <td>R$ {{ item.subtotal }}</td>
+      <td>
+        <form method="post" action="{% url 'remover_carrinho' %}">
+          {% csrf_token %}
+          <input type="hidden" name="produto_id" value="{{ item.produto.id }}">
+          <button type="submit">Remover</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+  <tfoot>
+    <tr>
+      <td colspan="3">Total:</td>
+      <td colspan="2">R$ {{ total }}</td>
+    </tr>
+  </tfoot>
+</table>
+
+<form method="get" action="{% url 'checkout' %}">
+  <button type="submit">Ir para o pagamento</button>
+</form>
+
+{% else %}
+<p>Carrinho vazio.</p>
+{% endif %}
+
 {% endblock %}

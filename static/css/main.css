@@ -7,15 +7,14 @@
 
 form {
   margin: 0 auto;
-  max-width: 400px; /* ajuste o valor conforme necessário */
+  max-width: 400px;
 }
 
-/* cor vermelha para mensagens de erro */
+
 .errorlist {
   color: red;
 }
 
-/* cor verde para mensagens de sucesso */
 .success {
   color: green;
 }

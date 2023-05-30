@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import Produto, Carrinho, LISTA_CATEGORIAS
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
@@ -10,7 +10,6 @@ from django.urls import reverse_lazy
 from .forms import RegistrationForm
 from django.views import View
 from .forms import CustomResetPasswordForm, CustomAuthenticationForm
-from django.shortcuts import  get_object_or_404
 import stripe
 from django.conf import settings
 from dotenv import load_dotenv
@@ -22,7 +21,7 @@ from django.contrib.auth.forms import UserChangeForm
 
 
 
-# Create your views here.
+
 def homepage(request):
     return render(request, "homepage.html")
 
@@ -33,10 +32,49 @@ def detalhes_produto(request, produto_id):
     produto = get_object_or_404(Produto, pk=produto_id)
     return render(request, 'detalhes_produto.html', {'produto': produto})
 
+
 def carrinho(request):
-    itens_do_carrinho = Carrinho.objects.filter(usuario=request.user)
-    context = {'itens_do_carrinho': itens_do_carrinho}
-    return render(request, 'carrinho.html', context)
+    if request.user.is_authenticated:
+        carrinho = Carrinho.objects.filter(usuario=request.user)
+    else:
+        carrinho = []
+    total = 0
+    for item in carrinho:
+        total += item.produto.preco * item.quantidade
+    return render(request, 'carrinho.html', {'carrinho': carrinho, 'total': total})
+
+
+def adicionar_carrinho(request, produto_id):
+    produto = get_object_or_404(Produto, pk=produto_id)
+    carrinho, created = Carrinho.objects.get_or_create(
+        usuario=request.user,
+        produto=produto,
+        defaults={'quantidade': 1}
+    )
+    if not created:
+        carrinho.quantidade += 1
+        carrinho.save()
+    messages.success(request, f'{produto.nome} adicionado ao carrinho')
+    return redirect('carrinho')
+
+
+def remover_carrinho(request, carrinho_id):
+    carrinho = get_object_or_404(Carrinho, pk=carrinho_id)
+    carrinho.delete()
+    messages.success(request, f'{carrinho.produto.nome} removido do carrinho')
+    return redirect('carrinho')
+
+
+
+def atualizar_quantidade(request, carrinho_id):
+    carrinho = get_object_or_404(Carrinho, pk=carrinho_id)
+    quantidade = int(request.POST.get('quantidade', 0))
+    if quantidade > 0:
+        carrinho.quantidade = quantidade
+        carrinho.save()
+    else:
+        carrinho.delete()
+    return redirect('carrinho')
 
 def produtos_por_categoria(request, categoria_nome):
     categoria = None
@@ -100,8 +138,7 @@ def login(request):
     if request.method == 'POST':
         form = CustomAuthenticationForm(request, data=request.POST)
         if form.is_valid():
-            # login successful
-            # redirect user to home page or some other page
+
             pass
     else:
         form = CustomAuthenticationForm(request)
@@ -216,7 +253,7 @@ def checkout(request):
 
     return render(request, 'checkout.html', {
         'session_id': checkout_session.id,
-        'STRIPE_PUBLIC_KEY': os.getenv('STRIPE_PUBLIC_KEY'), # Define a chave pública do Stripe como variável de ambiente
+        'STRIPE_PUBLIC_KEY': os.getenv('STRIPE_PUBLIC_KEY'),
     })
 
 
@@ -230,7 +267,7 @@ def lista_produtos_recentes(request=None):
     lista_produtos = Produto.objects.all().order_by('-data_criacao')[0:9]
     if lista_produtos:
         produto_destaque = lista_produtos[0]
-        lista_produtos = lista_produtos[1:]  # Exclui o produto_destaque da lista
+        lista_produtos = lista_produtos[1:]
     else:
         produto_destaque = None
     return {"lista_produtos_recentes": lista_produtos, "produto_destaque": produto_destaque}
